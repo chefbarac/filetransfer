@@ -94,6 +94,7 @@ function renderOrders() {
     }
     wrap.innerHTML = "";
     for (const o of orders) {
+        if (o.status === 'picked_up') continue;
         const ticket = document.createElement("div");
         ticket.className = "ticket";
         const created = new Date(o.created_at).toLocaleString();
