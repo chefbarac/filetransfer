@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Printshop Receive</title>
+        <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📁</text></svg>' />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <!-- Login -->
+        <div id="login" class="center">
+            <div class="card">
+                <div class="brand mono" style="margin-bottom: 14px">PRINTSHOP <span>RECEIVE</span></div>
+                <div class="field">
+                    <label>Dashboard password</label>
+                    <input type="password" id="loginPw" placeholder="••••••••" />
+                </div>
+                <button id="loginBtn" style="width: 100%">Enter dashboard</button>
+                <p id="loginError" class="muted hidden" style="color: var(--brand); margin-top: 10px"></p>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dash" class="wrap hidden">
+            <header class="top">
+                <div class="brand mono"><span id="shopNameHead">PRINT SHOP</span></div>
+                <div>
+                    <button class="secondary" id="changePwBtn">Change password</button>
+                    <button class="brand" id="receiveBtn">+ Receive files</button>
+                </div>
+            </header>
+
+            <div id="orders"></div>
+        </div>
+
+        <!-- New receive-link modal -->
+        <div id="receiveModal" class="center hidden" style="position: fixed; inset: 0; background: rgba(32, 29, 24, 0.4)">
+            <div class="card">
+                <h3 style="margin-top: 0">New receive link</h3>
+                <div class="field">
+                    <label>Customer name</label>
+                    <input type="text" id="newCustomerName" placeholder="e.g. Juan Dela Cruz" />
+                </div>
+                <div class="field">
+                    <label>Folder name (used when you save files to your PC)</label>
+                    <input type="text" id="newFolderName" placeholder="e.g. Juan - Thesis" />
+                </div>
+                <button id="createOrderBtn" style="width: 100%">Generate link</button>
+                <p class="muted" style="margin-top: 6px">Link expires 24 hours after you generate it.</p>
+                <div id="newLinkBox" class="hidden" style="margin-top: 14px">
+                    <label>Share this with your customer — isolated to just this order</label>
+                    <div class="link-box">
+                        <input type="text" id="newLinkInput" readonly />
+                        <button class="secondary" id="copyLinkBtn">Copy</button>
+                    </div>
+                </div>
+                <button class="secondary" id="closeReceiveModal" style="width: 100%; margin-top: 10px; margin-left: 0">Close</button>
+            </div>
+        </div>
+
+        <!-- Change dashboard password modal -->
+        <div id="changePwModal" class="center hidden" style="position: fixed; inset: 0; background: rgba(32, 29, 24, 0.4)">
+            <div class="card">
+                <h3 style="margin-top: 0">Change dashboard password</h3>
+                <div class="field">
+                    <label>Current password</label>
+                    <input type="password" id="oldPwInput" />
+                </div>
+                <div class="field">
+                    <label>New password</label>
+                    <input type="password" id="newPwInput" />
+                </div>
+                <button id="savePwBtn" style="width: 100%">Save</button>
+                <p id="changePwError" class="muted hidden" style="color: var(--brand)"></p>
+                <button class="secondary" id="closeChangePwModal" style="width: 100%; margin-top: 10px; margin-left: 0">Close</button>
+            </div>
+        </div>
+
+        <!-- Print view -->
+        <div id="printView" class="hidden"></div>
+
+        <script src="js/config.js"></script>
+        <script src="js/supabase.js"></script>
+        <script src="js/admin.js"></script>
+    </body>
+</html>

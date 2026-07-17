@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Send files</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span id="shopName">Print Shop</span></div>
+    <div class="tag">send files</div>
+  </header>
+
+  <!-- Main upload / status view -->
+  <div id="main" class="hidden">
+    <div class="ticket">
+      <div class="order-no mono" id="orderNo">ORDER —</div>
+      <div class="folder" id="folderLabel">—</div>
+      <div id="statusStamp"></div>
+    </div>
+
+    <div id="uploadArea">
+      <div class="ticket">
+        <p class="muted">Choose the files you want printed. You can add more before you're done.</p>
+        <input type="file" id="fileInput" multiple />
+        <div id="fileList" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <p class="muted" id="reopenNote">You can bookmark this page and reopen it anytime to check your order's status.</p>
+  </div>
+
+  <div id="loading" class="center">
+    <p class="muted">Loading…</p>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/send.js"></script>
+</body>
+</html>
