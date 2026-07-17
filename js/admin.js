@@ -94,7 +94,7 @@ function renderOrders() {
     }
     wrap.innerHTML = "";
     for (const o of orders) {
-        if (o.status === 'picked_up') continue;
+        // if (o.status === 'picked_up') continue;
         const ticket = document.createElement("div");
         ticket.className = "ticket";
         const created = new Date(o.created_at).toLocaleString();
@@ -106,13 +106,16 @@ function renderOrders() {
       ${expired && o.status === "uploading" ? `<span class="stamp uploading" style="margin-left:6px">Link expired</span>` : ""}
       <div class="perf"></div>
       <div class="files"></div>
-      <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">
+      ${`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;` + (o.status === 'picked_up' ? 'pointer-events: none;"' : '"') + `">
         ${statusButtons(o)}
         <button class="primary save-btn">Download All Files</button>
-      </div>
+      </div>`}
     `;
         const filesBox = ticket.querySelector(".files");
-        if (!o.files || !o.files.length) {
+        if (o.status === "picked_up") {
+            filesBox.innerHTML = `<p class="muted" > Files have been deleted after pickup.</ > `;
+        }
+        else if (!o.files || !o.files.length) {
             filesBox.innerHTML = `<p class="muted">No files uploaded yet.</p>`;
         } else {
             for (const f of o.files) {
@@ -132,7 +135,7 @@ function renderOrders() {
             }
         }
         ticket.querySelectorAll("[data-status]").forEach((btn) => {
-            btn.onclick = () => updateStatus(o.id, btn.dataset.status);
+            btn.onclick = () => updateStatus(o, btn.dataset.status);
         });
         ticket.querySelector(".save-btn").onclick = () => saveOrderToPC(o);
         wrap.appendChild(ticket);
@@ -146,9 +149,32 @@ function statusButtons(o) {
     }).join("");
 }
 
-async function updateStatus(orderId, status) {
-    await SB.rpc("admin_update_status", { admin_pw: adminPw, order_id: orderId, new_status: status });
-    loadOrders();
+async function updateStatus(order, status) {
+    try {
+        // If marking as picked up, delete uploaded files first
+        if (status === "picked_up") {
+            if (order?.files?.length) {
+                await SB.deleteFiles(order.files.map(f => f.path));
+            }
+        }
+
+        // Update the order status
+        const { error } = await SB.rpc("admin_update_status", {
+            admin_pw: adminPw,
+            order_id: order.id,
+            new_status: status
+        });
+
+        if (error) {
+            showToast(error.message);
+            return;
+        }
+
+        loadOrders();
+    } catch (err) {
+        console.error(err);
+        showToast("Something went wrong.");
+    }
 }
 
 function escapeHtml(s) {

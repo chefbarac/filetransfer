@@ -103,15 +103,47 @@ begin
 end; $$;
 
 -- Admin updates an order's status (scoped to their own business's orders).
-create or replace function admin_update_status(admin_pw text, order_id uuid, new_status text)
+create or replace function admin_update_status(
+    admin_pw text,
+    order_id uuid,
+    new_status text
+)
 returns boolean
-language plpgsql security definer as $$
-declare bid uuid;
+language plpgsql
+security definer
+as $$
+declare
+    bid uuid;
 begin
-  bid := resolve_business(admin_pw);
-  update orders set status = new_status where id = order_id and business_id = bid;
-  return true;
-end; $$;
+    -- Verify the business password
+    bid := resolve_business(admin_pw);
+
+    -- Update the order only if it belongs to this business
+    if new_status = 'picked_up' then
+        update orders
+        set
+            status = new_status,
+            files = '[]'::jsonb
+        where id = order_id
+          and business_id = bid;
+
+        if not found then
+            raise exception 'Order not found';
+        end if;
+    else
+        update orders
+        set status = new_status
+        where id = order_id
+          and business_id = bid;
+
+        if not found then
+            raise exception 'Order not found';
+        end if;
+    end if;
+
+    return true;
+end;
+$$;
 
 -- Anyone holding the exact order id (an unguessable UUID) can check status —
 -- this is what the customer's link polls. Deliberately does not require a
