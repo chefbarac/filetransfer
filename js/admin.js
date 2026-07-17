@@ -192,33 +192,56 @@ function sanitizeFolderName(name) {
 // ---------------- Print (auto-stretch to page) ----------------
 
 async function openPrintView(file) {
-    const sizeId = sessionStorage.getItem("lastPaperSize") || "short";
-    const size = PAPER_SIZES.find((p) => p.id === sizeId) || PAPER_SIZES[0];
-    const picked = prompt(
-        `Paper size for "${file.name}":\n` + PAPER_SIZES.map((p, i) => `${i + 1}) ${p.label}`).join("\n"),
-        String(PAPER_SIZES.indexOf(size) + 1)
-    );
-    const chosen = PAPER_SIZES[parseInt(picked, 10) - 1] || size;
-    sessionStorage.setItem("lastPaperSize", chosen.id);
+    // const sizeId = sessionStorage.getItem("lastPaperSize") || "short";
+    // const size = PAPER_SIZES.find((p) => p.id === sizeId) || PAPER_SIZES[0];
+    // const picked = prompt(
+    //     `Paper size for "${file.name}":\n` + PAPER_SIZES.map((p, i) => `${i + 1}) ${p.label}`).join("\n"),
+    //     String(PAPER_SIZES.indexOf(size) + 1)
+    // );
+    // const chosen = PAPER_SIZES[parseInt(picked, 10) - 1] || size;
+    // sessionStorage.setItem("lastPaperSize", chosen.id);
+
+    /* @page { size: ${chosen.css}; margin: 0; } */
 
     const url = await SB.fetchFileUrl(file.path);
     const isPdf = /\.pdf$/i.test(file.name);
     const win = window.open("", "_blank");
+
     win.document.write(`
-    <html><head><title>${escapeHtml(file.name)}</title>
-    <style>
-      @page { size: ${chosen.css}; margin: 0; }
-      html,body { margin:0; padding:0; }
-      img, embed { width:100vw; height:100vh; object-fit:fill; display:block; }
-    </style></head>
-    <body>
-      ${isPdf
-            ? `<embed src="${url}" type="application/pdf" />`
-            : `<img src="${url}" />`}
-      <script>
-        window.onload = () => setTimeout(() => window.print(), 300);
-      <\/script>
-    </body></html>
+    <html>
+                    <head>
+                        <title>Print Image</title>
+                        <style>
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 100vh;
+                            }
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: fill; /* Ensures it stays stretched */
+                            }
+                            @page {
+                                margin: 0; /* Removes browser header/footer margins */
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <img src="${url}" />
+                        <script>
+                            // Wait for the image to load in the new tab, then trigger print
+                            window.onload = function() {
+                                window.print();
+                                // Optional:
+                                window.close(); // Closes the tab automatically after printing
+                            };
+                        <\/script>
+                    </body>
+                    </html>
   `);
     win.document.close();
 }
