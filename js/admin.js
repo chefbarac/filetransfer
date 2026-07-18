@@ -17,6 +17,7 @@ const PAPER_SIZES = [
 let adminPw = sessionStorage.getItem("adminPw") || "";
 let businessName = sessionStorage.getItem("businessName") || "";
 let orders = [];
+const previousStatuses = new Map();
 
 const $ = (id) => document.getElementById(id);
 
@@ -93,7 +94,15 @@ function renderOrders() {
         return;
     }
     wrap.innerHTML = "";
+    let statusChanged = false;
     for (const o of orders) {
+        // ping if changed
+        const prevStatus = previousStatuses.get(o.id);
+        if (prevStatus && prevStatus !== o.status) {
+            statusChanged = true;
+        }
+        previousStatuses.set(o.id, o.status);
+
         // if (o.status === 'picked_up') continue;
         const ticket = document.createElement("div");
         ticket.className = "ticket";
@@ -139,6 +148,10 @@ function renderOrders() {
         });
         ticket.querySelector(".save-btn").onclick = () => saveOrderToPC(o);
         wrap.appendChild(ticket);
+    }
+
+    if (statusChanged) {
+        playPing();
     }
 }
 
