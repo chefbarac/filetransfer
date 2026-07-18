@@ -189,7 +189,7 @@ async function saveOrderToPC(o) {
         showToast(`Started downloading ${o.files.length} file(s).`);
         requestAnimationFrame(async () => {
             for (const f of o.files) {
-                const url = await SB.fetchFile(f.path);
+                const url = await SB.fetchFileUrl(f.path);
 
                 const a = document.createElement("a");
                 a.href = url;
@@ -227,7 +227,7 @@ async function openPrintView(file) {
 
     /* @page { size: ${chosen.css}; margin: 0; } */
 
-    const url = await SB.fetchFile(file.path);
+    const url = await SB.fetchFileUrl(file.path);
     const isPdf = /\.pdf$/i.test(file.name);
     const win = window.open("", "_blank");
 
