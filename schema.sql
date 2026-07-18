@@ -161,22 +161,51 @@ $$;
 -- Customer's browser calls this after each file finishes uploading to storage,
 -- to append it to the order's file list and flip status to 'received' on first
 -- file. Rejects uploads once the order's 24-hour link has expired.
-create or replace function append_order_file(order_id uuid, file_name text, storage_path text, size_bytes bigint)
+create or replace function append_order_file(
+    order_id uuid,
+    file_name text,
+    storage_path text,
+    size_bytes bigint
+)
 returns boolean
-language plpgsql security definer as $$
+language plpgsql
+security definer
+as $$
 begin
-  if (select now() > expires_at from orders where id = order_id) then
-    raise exception 'This link has expired.';
-  end if;
-  update orders
+    -- Order does not exist (deleted)
+    if not exists (
+        select 1
+        from orders
+        where id = order_id
+    ) then
+        raise exception 'This order no longer exists.';
+    end if;
+
+    -- Link expired
+    if (
+        select now() > expires_at
+        from orders
+        where id = order_id
+    ) then
+        raise exception 'This link has expired.';
+    end if;
+
+    update orders
     set files = files || jsonb_build_object(
-          'name', file_name, 'path', storage_path, 'size', size_bytes,
-          'uploaded_at', now()
+            'name', file_name,
+            'path', storage_path,
+            'size', size_bytes,
+            'uploaded_at', now()
         ),
-        status = case when status = 'uploading' then 'received' else status end
+        status = case
+            when status = 'uploading' then 'received'
+            else status
+        end
     where id = order_id;
-  return true;
-end; $$;
+
+    return true;
+end;
+$$;
 
 create or replace function get_order_files(order_id uuid)
 returns jsonb
