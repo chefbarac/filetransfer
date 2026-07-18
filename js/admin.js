@@ -330,13 +330,17 @@ $("savePwBtn").onclick = async () => {
     $("changePwError").classList.add("hidden");
     const oldPw = $("oldPwInput").value.trim();
     const newPw = $("newPwInput").value.trim();
-    if (!oldPw || !newPw) return;
+    if (!oldPw || !newPw) {
+        showToast('Empty password is not allowed.')
+        return;
+    }
     $("savePwBtn").disabled = true;
     try {
         await SB.rpc("change_business_password", { old_pw: oldPw, new_pw: newPw });
         adminPw = newPw;
         sessionStorage.setItem("adminPw", newPw);
         hide($("changePwModal"));
+        showToast('Password changed successfully.')
     } catch (e) {
         $("changePwError").textContent = "Current password was incorrect.";
         $("changePwError").classList.remove("hidden");
