@@ -6,211 +6,312 @@
    ============================================================ */
 
 :root {
-  --paper: #f7f4ec;
-  --paper-dim: #efeadd;
-  --ink: #201d18;
-  --ink-soft: #56504a;
-  --line: #d8d0c0;
-  --brand: #b3402c;       /* rubber-stamp red */
-  --stamp-received: #2b5fa8;
-  --stamp-printing: #a8781f;
-  --stamp-ready: #2f7d4f;
-  --stamp-uploading: #8a8377;
-  --radius: 3px;
-  --shadow: 0 1px 0 rgba(32,29,24,0.06);
+    --paper: #f7f4ec;
+    --paper-dim: #efeadd;
+    --ink: #201d18;
+    --ink-soft: #56504a;
+    --line: #d8d0c0;
+    --brand: #b3402c; /* rubber-stamp red */
+    --stamp-canceled: #b3261e;
+    --stamp-received: #2b5fa8;
+    --stamp-printing: #a8781f;
+    --stamp-ready: #2f7d4f;
+    --stamp-uploading: #8a8377;
+    --radius: 3px;
+    --shadow: 0 1px 0 rgba(32, 29, 24, 0.06);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family:
+        "IBM Plex Sans",
+        -apple-system,
+        "Segoe UI",
+        sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 .mono {
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-a { color: var(--brand); }
+a {
+    color: var(--brand);
+}
 
 .wrap {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 28px 20px 80px;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
 }
 
 header.top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  border-bottom: 2px solid var(--ink);
-  padding-bottom: 12px;
-  margin-bottom: 24px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
 }
 
 header.top .brand {
-  font-family: "JetBrains Mono", monospace;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
-header.top .brand span { color: var(--brand); }
+header.top .brand span {
+    color: var(--brand);
+}
 
 header.top .tag {
-  font-size: 12px;
-  color: var(--ink-soft);
+    font-size: 12px;
+    color: var(--ink-soft);
 }
 
 /* ---------- Claim ticket (signature element) ---------- */
 .ticket {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 18px 20px;
-  margin-bottom: 16px;
-  position: relative;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    position: relative;
 }
 
 .ticket::before {
-  content: "";
-  position: absolute;
-  left: 0; right: 0; top: 0;
-  height: 0;
-  border-top: 2px dashed transparent;
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 0;
+    border-top: 2px dashed transparent;
 }
 
 .perf {
-  position: relative;
-  height: 0;
-  margin: 18px -20px;
-  border-top: 2px dashed var(--line);
+    position: relative;
+    height: 0;
+    margin: 18px -20px;
+    border-top: 2px dashed var(--line);
 }
-.perf::before, .perf::after {
-  content: "";
-  position: absolute;
-  top: -9px;
-  width: 18px; height: 18px;
-  background: var(--paper);
-  border-radius: 50%;
+.perf::before,
+.perf::after {
+    content: "";
+    position: absolute;
+    top: -9px;
+    width: 18px;
+    height: 18px;
+    background: var(--paper);
+    border-radius: 50%;
 }
-.perf::before { left: -9px; }
-.perf::after { right: -9px; }
+.perf::before {
+    left: -9px;
+}
+.perf::after {
+    right: -9px;
+}
 
 .ticket .order-no {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  color: var(--ink-soft);
-  letter-spacing: 0.04em;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
 }
 
 .ticket .folder {
-  font-size: 17px;
-  font-weight: 600;
-  margin: 2px 0 10px;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 2px 0 10px;
 }
 
 /* ---------- Stamps (status badges) ---------- */
 .stamp {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 5px 10px;
-  border: 1.5px solid currentColor;
-  border-radius: 2px;
-  transform: rotate(-1.5deg);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1.5px solid currentColor;
+    border-radius: 2px;
+    transform: rotate(-1.5deg);
 }
-.stamp.uploading { color: var(--stamp-uploading); }
-.stamp.received  { color: var(--stamp-received); }
-.stamp.printing  { color: var(--stamp-printing); }
-.stamp.ready     { color: var(--stamp-ready); }
-.stamp.picked_up { color: var(--ink-soft); text-decoration: line-through; transform: none; }
+.stamp.uploading {
+    color: var(--stamp-uploading);
+}
+.stamp.received {
+    color: var(--stamp-received);
+}
+.stamp.printing {
+    color: var(--stamp-printing);
+}
+.stamp.ready {
+    color: var(--stamp-ready);
+}
+.stamp.picked_up {
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    transform: none;
+}
+.stamp.canceled {
+    color: var(--stamp-canceled);
+    border-color: var(--stamp-canceled);
+    text-decoration: line-through;
+    transform: none;
+}
 
 /* ---------- Buttons & inputs ---------- */
-button, .btn {
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 600;
-  padding: 9px 16px;
-  border-radius: var(--radius);
-  border: 1.5px solid var(--ink);
-  background: var(--ink);
-  color: var(--paper);
-  cursor: pointer;
+button,
+.btn {
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: var(--radius);
+    border: 1.5px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
 }
-button.secondary, .btn.secondary {
-  background: transparent;
-  color: var(--ink);
+button.secondary,
+.btn.secondary {
+    background: transparent;
+    color: var(--ink);
 }
-button.brand { background: var(--brand); border-color: var(--brand); color: #fff; }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-button + button { margin-left: 8px; }
+button.brand {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+button + button {
+    margin-left: 8px;
+}
 
-input[type="text"], input[type="password"] {
-  font-family: inherit;
-  font-size: 14px;
-  padding: 9px 11px;
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius);
-  background: #fff;
-  width: 100%;
+input[type="text"],
+input[type="password"] {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 9px 11px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    background: #fff;
+    width: 100%;
 }
 
-label { font-size: 12px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
-.field { margin-bottom: 14px; }
+label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 4px;
+}
+.field {
+    margin-bottom: 14px;
+}
 
 /* ---------- Progress bar ---------- */
 .progress {
-  height: 8px;
-  background: var(--paper-dim);
-  border-radius: 4px;
-  overflow: hidden;
-  margin: 8px 0;
+    height: 8px;
+    background: var(--paper-dim);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
 }
 .progress > i {
-  display: block;
-  height: 100%;
-  background: var(--brand);
-  width: 0%;
-  transition: width 0.15s ease;
+    display: block;
+    height: 100%;
+    background: var(--brand);
+    width: 0%;
+    transition: width 0.15s ease;
 }
 
 /* ---------- File rows ---------- */
 .file-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-top: 1px solid var(--paper-dim);
-  font-size: 13.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-top: 1px solid var(--paper-dim);
+    font-size: 13.5px;
 }
-.file-row:first-child { border-top: none; }
-.file-row .name { font-family: "JetBrains Mono", monospace; }
-.file-row .size { color: var(--ink-soft); font-size: 12px; }
+.file-row:first-child {
+    border-top: none;
+}
+.file-row .name {
+    font-family: "JetBrains Mono", monospace;
+}
+.file-row .size {
+    color: var(--ink-soft);
+    font-size: 12px;
+}
 
 /* ---------- Misc ---------- */
-.center { display: flex; align-items: center; justify-content: center; min-height: 70vh; }
-.card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); max-width: 360px; width: 100%; }
-.muted { color: var(--ink-soft); font-size: 13px; }
-.link-box { display: flex; gap: 8px; align-items: center; }
-.link-box input { font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
-.row { display: flex; gap: 10px; align-items: flex-end; }
-.row > .field { flex: 1; }
-.empty { text-align: center; padding: 60px 20px; color: var(--ink-soft); }
-.hidden { display: none !important; }
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+}
+.card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    max-width: 360px;
+    width: 100%;
+}
+.muted {
+    color: var(--ink-soft);
+    font-size: 13px;
+}
+.link-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.link-box input {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12.5px;
+}
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+.row > .field {
+    flex: 1;
+}
+.empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+}
+.hidden {
+    display: none !important;
+}
 
 @media print {
-  body * { visibility: hidden; }
+    body * {
+        visibility: hidden;
+    }
 }

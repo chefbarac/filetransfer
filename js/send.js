@@ -1,14 +1,7 @@
-const STATUS_LABEL = {
-    uploading: "Uploading",
-    received: "Received",
-    printing: "Printing",
-    ready: "Ready for pickup",
-    picked_up: "Picked up",
-};
-
 const params = new URLSearchParams(location.search);
 const orderId = params.get("order");
 let previousStatus = null;
+let orderLineNextNum = 1;
 
 const els = {
     main: document.getElementById("main"),
@@ -89,7 +82,7 @@ function fileRow(file) {
     const size = (file.size / 1024 / 1024).toFixed(2) + " MB";
     row.innerHTML = `
     <div style="display:flex;justify-content:space-between">
-      <span class="name">${file.name}</span>
+      <span class="name">${orderLineNextNum++}. ${file.name}</span>
       <span class="size">${size}</span>
     </div>
     <div class="progress"><i></i></div>
@@ -102,7 +95,7 @@ els.fileInput.addEventListener("change", async () => {
     els.fileInput.value = "";
     for (const file of files) {
         const row = fileRow(file);
-        els.fileList.prepend(row);
+        els.fileList.appendChild(row);
         const bar = row.querySelector(".progress > i");
         try {
             const path = await SB.uploadFile(orderId, file, (pct) => {
@@ -142,7 +135,7 @@ async function loadFiles() {
         const size = (file.size / 1024 / 1024).toFixed(2) + " MB";
         row.innerHTML = `
       <div style="display:flex;justify-content:space-between">
-      <span class="name" style="flex-grow: 1;">${i + 1}. ${escapeHtml(file.name)}</span>
+      <span class="name" style="flex-grow: 1;">${orderLineNextNum++}. ${escapeHtml(file.name)}</span>
       <span class="size" style="flex-shrink: 0;">${size}</span>
     </div>
     `;

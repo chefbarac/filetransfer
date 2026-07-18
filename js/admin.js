@@ -1,11 +1,5 @@
-const STATUS_LABEL = {
-    uploading: "Uploading",
-    received: "Received",
-    printing: "Printing",
-    ready: "Ready for pickup",
-    picked_up: "Picked up",
-};
-const STATUS_FLOW = ["received", "printing", "ready", "picked_up"];
+
+const STATUS_FLOW = ["received", "printing", "ready", "picked_up", "canceled"];
 
 const PAPER_SIZES = [
     { id: "short", label: "Short (Letter, 8.5×11in)", css: "8.5in 11in" },
@@ -87,6 +81,10 @@ async function loadOrders() {
     }
 }
 
+function showControls(status) {
+    return !['picked_up', 'canceled'].includes(status)
+}
+
 function renderOrders() {
     const wrap = $("orders");
     if (!orders.length) {
@@ -115,14 +113,14 @@ function renderOrders() {
       ${expired && o.status === "uploading" ? `<span class="stamp uploading" style="margin-left:6px">Link expired</span>` : ""}
       <div class="perf"></div>
       <div class="files"></div>
-      ${`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;` + (o.status === 'picked_up' ? 'display: none;"' : '"') + `">
+      ${`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;` + (!showControls(o.status) ? 'display: none;"' : '"') + `">
         ${statusButtons(o)}
         <button class="primary save-btn">Download All Files</button>
       </div>`}
     `;
         const filesBox = ticket.querySelector(".files");
-        if (o.status === "picked_up") {
-            filesBox.innerHTML = `<p class="muted" > Files have been deleted after pickup.</ > `;
+        if (!showControls(o.status)) {
+            filesBox.innerHTML = `<p class="muted" > Files have been deleted after pickup or cancel.</ > `;
         }
         else if (!o.files || !o.files.length) {
             filesBox.innerHTML = `<p class="muted">No files uploaded yet.</p>`;
@@ -165,7 +163,7 @@ function statusButtons(o) {
 async function updateStatus(order, status) {
     try {
         // If marking as picked up, delete uploaded files first
-        if (status === "picked_up") {
+        if (!showControls(status)) {
             if (!confirm('Files will be deleted. Continue?')) return;
             if (order?.files?.length) {
                 await SB.deleteFiles(order.files.map(f => f.path));

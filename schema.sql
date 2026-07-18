@@ -23,7 +23,7 @@ create table if not exists orders (
   customer_name text not null default 'Walk-in customer',
   folder_name text not null default 'Untitled order',
   status text not null default 'uploading'
-    check (status in ('uploading','received','printing','ready','picked_up')),
+    check (status in ('uploading','received','printing','ready','picked_up','canceled')),
   files jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now(),
   expires_at timestamptz not null default (now() + interval '1 day')
@@ -119,7 +119,7 @@ begin
     bid := resolve_business(admin_pw);
 
     -- Update the order only if it belongs to this business
-    if new_status = 'picked_up' then
+    if new_status in ('picked_up', 'canceled') then
         update orders
         set
             status = new_status,
