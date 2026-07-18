@@ -157,6 +157,7 @@ language sql security definer as $$
   where o.id = order_id;
 $$;
 
+
 -- Customer's browser calls this after each file finishes uploading to storage,
 -- to append it to the order's file list and flip status to 'received' on first
 -- file. Rejects uploads once the order's 24-hour link has expired.
@@ -176,6 +177,16 @@ begin
     where id = order_id;
   return true;
 end; $$;
+
+create or replace function get_order_files(order_id uuid)
+returns jsonb
+language sql
+security definer
+as $$
+    select files
+    from orders
+    where id = order_id;
+$$;
 
 -- ============================================================
 -- Storage: create a bucket named "uploads" (Storage → New bucket → Public bucket = OFF).

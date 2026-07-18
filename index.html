@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBE3EBNVWY"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+
+            gtag("config", "G-KBE3EBNVWY");
+        </script>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Printshop Receive</title>
@@ -45,7 +56,7 @@
                     <input type="text" id="newCustomerName" placeholder="e.g. Juan Dela Cruz" />
                 </div>
                 <div class="field">
-                    <label>Notes (additional info)</label>
+                    <label>Note to customer (visible to customer)</label>
                     <input type="text" id="newFolderName" placeholder="e.g. Juan - Thesis" />
                 </div>
                 <button id="createOrderBtn" style="width: 100%">Generate link</button>
@@ -82,7 +93,9 @@
         <!-- Print view -->
         <div id="printView" class="hidden"></div>
 
+        <script src="js/helpers.js"></script>
         <script src="js/toast.js"></script>
+        <script src="js/ping.js"></script>
         <script src="js/config.js"></script>
         <script src="js/supabase.js"></script>
         <script src="js/admin.js"></script>

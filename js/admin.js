@@ -106,7 +106,7 @@ function renderOrders() {
       ${expired && o.status === "uploading" ? `<span class="stamp uploading" style="margin-left:6px">Link expired</span>` : ""}
       <div class="perf"></div>
       <div class="files"></div>
-      ${`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;` + (o.status === 'picked_up' ? 'pointer-events: none;"' : '"') + `">
+      ${`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;` + (o.status === 'picked_up' ? 'display: none;"' : '"') + `">
         ${statusButtons(o)}
         <button class="primary save-btn">Download All Files</button>
       </div>`}
@@ -118,12 +118,12 @@ function renderOrders() {
         else if (!o.files || !o.files.length) {
             filesBox.innerHTML = `<p class="muted">No files uploaded yet.</p>`;
         } else {
-            for (const f of o.files) {
+            for (const [i, f] of o.files.entries()) {
                 const row = document.createElement("div");
                 row.className = "file-row";
                 row.innerHTML = `
-          <span class="name">${escapeHtml(f.name)}</span>
-          <span class="size">${(f.size / 1024 / 1024).toFixed(2)} MB</span>
+          <span class="name" style="flex-grow: 1;">${i + 1}. ${escapeHtml(f.name)}</span>
+          <span class="size" style="flex-shrink: 0;">${(f.size / 1024 / 1024).toFixed(2)} MB</span>
         `;
                 const printBtn = document.createElement("button");
                 printBtn.className = "secondary";
@@ -153,6 +153,7 @@ async function updateStatus(order, status) {
     try {
         // If marking as picked up, delete uploaded files first
         if (status === "picked_up") {
+            if (!confirm('Files will be deleted. Continue?')) return;
             if (order?.files?.length) {
                 await SB.deleteFiles(order.files.map(f => f.path));
             }
@@ -177,10 +178,6 @@ async function updateStatus(order, status) {
     }
 }
 
-function escapeHtml(s) {
-    return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
 // ---------------- Save to PC (File System Access API) ----------------
 async function saveOrderToPC(o) {
     if (!o.files || !o.files.length) {
@@ -192,7 +189,7 @@ async function saveOrderToPC(o) {
         showToast(`Started downloading ${o.files.length} file(s).`);
         requestAnimationFrame(async () => {
             for (const f of o.files) {
-                const url = await SB.fetchFileUrl(f.path);
+                const url = await SB.fetchFile(f.path);
 
                 const a = document.createElement("a");
                 a.href = url;
@@ -230,7 +227,7 @@ async function openPrintView(file) {
 
     /* @page { size: ${chosen.css}; margin: 0; } */
 
-    const url = await SB.fetchFileUrl(file.path);
+    const url = await SB.fetchFile(file.path);
     const isPdf = /\.pdf$/i.test(file.name);
     const win = window.open("", "_blank");
 

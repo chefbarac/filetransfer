@@ -1,46 +1,63 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Send files</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css" />
-</head>
-<body>
-<div class="wrap">
-  <header class="top">
-    <div class="brand"><span id="shopName">Print Shop</span></div>
-    <div class="tag">send files</div>
-  </header>
+    <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBE3EBNVWY"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
 
-  <!-- Main upload / status view -->
-  <div id="main" class="hidden">
-    <div class="ticket">
-      <div class="order-no mono" id="orderNo">ORDER —</div>
-      <div class="folder" id="folderLabel">—</div>
-      <div id="statusStamp"></div>
-    </div>
+            gtag("config", "G-KBE3EBNVWY");
+        </script>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Send files</title>
+        <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📁</text></svg>' />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="css/style.css" />
+    </head>
+    <body>
+        <div class="wrap">
+            <header class="top">
+                <div class="brand"><span id="shopName">Print Shop</span></div>
+                <div class="tag">send files</div>
+            </header>
 
-    <div id="uploadArea">
-      <div class="ticket">
-        <p class="muted">Choose the files you want printed. You can add more before you're done.</p>
-        <input type="file" id="fileInput" multiple />
-        <div id="fileList" style="margin-top:14px"></div>
-      </div>
-    </div>
+            <!-- Main upload / status view -->
+            <div id="main" class="hidden">
+                <div class="ticket">
+                    <div class="order-no mono" id="orderNo">ORDER —</div>
+                    <div class="folder" id="folderLabel">—</div>
+                    <div id="statusStamp"></div>
+                </div>
 
-    <p class="muted" id="reopenNote">You can bookmark this page and reopen it anytime to check your order's status.</p>
-  </div>
+                <div id="uploadArea">
+                    <div class="ticket">
+                        <p class="muted">Choose the files you want printed. You can add more before you're done.</p>
+                        <input type="file" id="fileInput" multiple />
+                    </div>
+                </div>
 
-  <div id="loading" class="center">
-    <p class="muted">Loading…</p>
-  </div>
-</div>
+                <button id="addFilesBtn" class="primary" style="margin-top: 12px">+ Add Files</button>
+                <div id="uploadedFiles" style="margin-top: 20px"></div>
+                <div id="fileList" style="margin-top: 14px"></div>
 
-<script src="js/config.js"></script>
-<script src="js/supabase.js"></script>
-<script src="js/send.js"></script>
-</body>
+                <p class="muted" id="reopenNote">You can bookmark this page and reopen it anytime to check your order's status.</p>
+            </div>
+
+            <div id="loading" class="center">
+                <p class="muted">Loading…</p>
+            </div>
+        </div>
+
+        <script src="js/helpers.js"></script>
+        <script src="js/ping.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/supabase.js"></script>
+        <script src="js/send.js"></script>
+    </body>
 </html>

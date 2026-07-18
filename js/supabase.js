@@ -82,5 +82,11 @@ const SB = {
         if (!res.ok) {
             throw new Error(await res.text());
         }
-    }
+    },
+
+    async getOrderFiles(orderId) {
+        return this.rpc("get_order_files", {
+            order_id: orderId
+        });
+    },
 };
