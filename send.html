@@ -37,8 +37,9 @@
 
                 <div id="uploadArea">
                     <div class="ticket">
+                        <label for="fileInput" class="upload-label"> <span class="upload-icon">⬆</span> Upload Files </label>
                         <p class="muted">Choose the files you want printed. You can add more before you're done.</p>
-                        <input type="file" id="fileInput" multiple />
+                        <input type="file" id="fileInput" multiple hidden />
                     </div>
                 </div>
 
@@ -59,6 +60,7 @@
         <script src="js/ping.js"></script>
         <script src="js/config.js"></script>
         <script src="js/supabase.js"></script>
+        <script src="js/indexedDB.js"></script>
         <script src="js/send.js"></script>
     </body>
 </html>

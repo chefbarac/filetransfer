@@ -82,7 +82,7 @@ function fileRow(file) {
     const size = (file.size / 1024 / 1024).toFixed(2) + " MB";
     row.innerHTML = `
     <div style="display:flex;justify-content:space-between">
-      <span class="name">${orderLineNextNum++}. ${file.name}</span>
+      <span class="name">${file.id}. ${file.name}</span>
       <span class="size">${size}</span>
     </div>
     <div class="progress"><i></i></div>
@@ -94,6 +94,7 @@ els.fileInput.addEventListener("change", async () => {
     const files = Array.from(els.fileInput.files);
     els.fileInput.value = "";
     for (const file of files) {
+        file.id = orderLineNextNum++;
         const row = fileRow(file);
         els.fileList.appendChild(row);
         const bar = row.querySelector(".progress > i");
@@ -109,38 +110,122 @@ els.fileInput.addEventListener("change", async () => {
             });
             bar.style.width = "100%";
             row.style.opacity = "0.7";
+            if (/\.(jpe?g|png|gif|webp)$/i.test(file.name)) {
+                const thumbBlob = await makeThumbnailBlob(file);
+                await saveThumbnail(orderId, file.id, thumbBlob);
+            }
             refreshStatus();
         } catch (e) {
             bar.style.background = "var(--brand)";
             row.insertAdjacentHTML("beforeend", `<div class="muted" style="color:var(--brand)">${e.message.includes("expired") ? "This link has expired" : "Upload failed — try again"}</div>`);
         }
     }
+    // reRender Gallery view
+    orderLineNextNum = 1;
+    loadFiles();
 });
 
 els.addFilesBtn.addEventListener("click", () => {
     els.fileInput.click();
 });
 
+async function renderGallery(rows) {
+    els.uploadedFiles.innerHTML = "";
+    els.uploadedFiles.className = "file-gallery";
+
+    for (const file of rows) {
+        const lineNum = file.id;
+        const size = formatSize(file.size);
+
+        const card = document.createElement("div");
+        card.className = "file-card";
+
+        // Placeholder while thumbnail loads
+        card.innerHTML = `
+            <div class="file-thumb-wrap">
+                <div class="file-thumb file-thumb--loading"></div>
+            </div>
+            <div class="file-meta">
+                <span class="file-line">${lineNum}</span>
+                <div class="file-info">
+                    <span class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</span>
+                    <span class="file-size">${size}</span>
+                </div>
+            </div>
+        `;
+        els.uploadedFiles.appendChild(card);
+
+        // Fetch thumbnail keyed by orderId + line number, swap in once ready
+        loadThumbForCard(card, file, lineNum);
+    }
+}
+
+async function loadThumbForCard(card, file, lineNum) {
+    const wrap = card.querySelector(".file-thumb-wrap");
+    const isImage = /\.(jpe?g|png|gif|webp|heic|bmp)$/i.test(file.name);
+
+    let blob = null;
+    try {
+        blob = await getThumbnail(orderId, lineNum); // IndexedDB lookup
+    } catch (e) {
+        console.warn("Thumbnail lookup failed", e);
+    }
+
+    if (blob) {
+        const url = URL.createObjectURL(blob);
+        wrap.innerHTML = `<img src="${url}" alt="${escapeHtml(file.name)}" class="file-thumb" loading="lazy" />`;
+        wrap.querySelector("img").onload = () => URL.revokeObjectURL(url);
+        // wrap.addEventListener("click", () => openLightbox(url, file.name));
+    } else {
+        wrap.innerHTML = `<div class="file-thumb file-thumb--icon ${isImage ? "" : "file-thumb--doc"}">${fileTypeIcon(file.name)}</div>`;
+    }
+}
+
+function formatSize(bytes) {
+    const mb = bytes / 1024 / 1024;
+    return mb >= 1 ? `${mb.toFixed(2)} MB` : `${(bytes / 1024).toFixed(0)} KB`;
+}
+
+function fileTypeIcon(name) {
+    const ext = name.split(".").pop().toLowerCase();
+    const icons = {
+        pdf: "📄", doc: "📝", docx: "📝",
+        xls: "📊", xlsx: "📊",
+        zip: "🗜️", rar: "🗜️",
+        mp4: "🎬", mov: "🎬",
+        jpg: "🖼️", "jpeg": "🖼️", "png": "🖼️",
+        default: "📂"
+    };
+    return icons[ext] || icons.default;
+}
+
+function openLightbox(url, name) {
+    const overlay = document.createElement("div");
+    overlay.className = "lightbox-overlay";
+    overlay.innerHTML = `
+        <div class="lightbox-content">
+            <img src="${url}" alt="${escapeHtml(name)}" />
+        </div>
+        <span class="lightbox-close">&times;</span>
+    `;
+    overlay.addEventListener("click", () => overlay.remove());
+    document.body.appendChild(overlay);
+}
+
 async function loadFiles() {
-    const rows = await SB.rpc("get_order_files", {
+    let rows = await SB.rpc("get_order_files", {
         order_id: orderId
     });
 
     els.uploadedFiles.innerHTML = "";
-
-    rows.forEach((file, i) => {
-        const row = document.createElement("div");
-        row.className = "file-row";
-        row.style.display = "block";
-        const size = (file.size / 1024 / 1024).toFixed(2) + " MB";
-        row.innerHTML = `
-      <div style="display:flex;justify-content:space-between">
-      <span class="name" style="flex-grow: 1;">${orderLineNextNum++}. ${escapeHtml(file.name)}</span>
-      <span class="size" style="flex-shrink: 0;">${size}</span>
-    </div>
-    `;
-        els.uploadedFiles.appendChild(row);
+    rows = rows.map(file => {
+        return {
+            ...file,
+            id: orderLineNextNum++
+        }
     });
+
+    renderGallery(rows)
 }
 
 init();

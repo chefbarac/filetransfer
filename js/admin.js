@@ -126,12 +126,19 @@ function renderOrders() {
             filesBox.innerHTML = `<p class="muted">No files uploaded yet.</p>`;
         } else {
             for (const [i, f] of o.files.entries()) {
+                const filename = `${i + 1}. ${escapeHtml(f.name)}`;
                 const row = document.createElement("div");
                 row.className = "file-row";
                 row.innerHTML = `
-          <span class="name" style="flex-grow: 1;">${i + 1}. ${escapeHtml(f.name)}</span>
+          <span class="name" style="flex-grow: 1;">${filename}</span>
           <span class="size" style="flex-shrink: 0;">${(f.size / 1024 / 1024).toFixed(2)} MB</span>
         `;
+                const downloadBtn = document.createElement("button");
+                downloadBtn.className = "secondary";
+                downloadBtn.textContent = "Download";
+                downloadBtn.style.marginLeft = "10px";
+                downloadBtn.onclick = () => saveFileToPC(f, filename);
+                row.appendChild(downloadBtn);
                 const printBtn = document.createElement("button");
                 printBtn.className = "secondary";
                 printBtn.textContent = "Print";
@@ -199,12 +206,12 @@ async function saveOrderToPC(o) {
     try {
         showToast(`Started downloading ${o.files.length} file(s).`);
         requestAnimationFrame(async () => {
-            for (const f of o.files) {
+            for (const [i, f] of o.files.entries()) {
                 const url = await SB.fetchFileUrl(f.path);
 
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = f.name; // Suggested filename
+                a.download = `${i + 1}. ${f.name}`; // Suggested filename
                 a.style.display = "none";
 
                 document.body.appendChild(a);
@@ -217,6 +224,35 @@ async function saveOrderToPC(o) {
         })
     } catch (e) {
         showToast("Couldn't download files: " + e.message);
+    }
+}
+
+async function saveFileToPC(file, filename) {
+    if (!file) {
+        showToast("No file to download.");
+        return;
+    }
+
+    try {
+        showToast(`Started downloading ${1} file.`);
+        requestAnimationFrame(async () => {
+            const url = await SB.fetchFileUrl(file.path);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename; // Suggested filename
+            a.style.display = "none";
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            // Small delay so browsers don't block multiple downloads
+            await new Promise(resolve => setTimeout(resolve, 200));
+
+        })
+    } catch (e) {
+        showToast("Couldn't download file: " + e.message);
     }
 }
 
@@ -340,7 +376,7 @@ $("savePwBtn").onclick = async () => {
         adminPw = newPw;
         sessionStorage.setItem("adminPw", newPw);
         hide($("changePwModal"));
-        showToast('Password changed successfully.')
+        showToast('Password changed successfully.');
     } catch (e) {
         $("changePwError").textContent = "Current password was incorrect.";
         $("changePwError").classList.remove("hidden");
